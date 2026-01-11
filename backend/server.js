@@ -10,8 +10,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ✅ Root route
+app.get("/", (req, res) => {
+  res.send("Auth API is running 🚀");
+});
+
+// Auth routes
 app.use("/api/auth", authRoutes);
 
+// MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))

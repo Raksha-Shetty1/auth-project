@@ -1,60 +1,61 @@
 import { useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+
+const API = "https://auth-project-hdzg.onrender.com/api/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [msg, setMsg] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
-
     try {
-      const res = await fetch("https://your-backend-name.onrender.com/api/auth/login", {
-
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.message);
-        return;
-      }
-
-      alert("Login successful");
-
+      const res = await axios.post(`${API}/login`, { email, password });
+      setMsg("Login successful ✅");
+      console.log(res.data);
     } catch (err) {
-      setError("Server error");
+      setMsg(err.response?.data?.message || "Login failed ❌");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow w-80">
-        <h2 className="text-xl font-bold mb-4 text-center">Login</h2>
-
-        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Welcome Back</h2>
 
         <input
           type="email"
           placeholder="Email"
-          className="w-full mb-3 p-2 border rounded"
+          className="w-full mb-4 px-4 py-2 border rounded"
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
 
         <input
           type="password"
           placeholder="Password"
-          className="w-full mb-3 p-2 border rounded"
+          className="w-full mb-4 px-4 py-2 border rounded"
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
 
-        <button className="w-full bg-green-500 text-white p-2 rounded">
+        <button className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
           Login
         </button>
+
+        {msg && <p className="text-center mt-3 text-sm">{msg}</p>}
+
+        <p className="text-center mt-4 text-sm">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="text-blue-600">
+            Sign up
+          </Link>
+        </p>
       </form>
     </div>
   );
